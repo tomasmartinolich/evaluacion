@@ -1,6 +1,9 @@
 const { app, BrowserWindow } = require("electron");
+const Store = require("electron-store");
 
 let appWin;
+
+const store = new Store();
 
 createWindow = () => {
     appWin = new BrowserWindow({
@@ -18,6 +21,8 @@ createWindow = () => {
     appWin.loadURL(`file://${__dirname}/dist/index.html`);
 
     appWin.setMenu(null);
+
+    // appWin.webContents.openDevTools();
 
     appWin.on("closed", () => {
         appWin = null;

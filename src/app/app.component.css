@@ -46,3 +46,10 @@
     visibility: visible;
     opacity: 1;
   }
+
+
+  /* dropdown */
+  .dropdown-content {
+  max-height: 13em;
+  overflow: auto;
+}

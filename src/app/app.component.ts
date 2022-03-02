@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Chart } from 'chart.js';
+import { ElectronStoreService } from './electron-store.service';
+import { Paciente } from './paciente.model';
 
 
 @Component({
@@ -9,15 +11,12 @@ import { Chart } from 'chart.js';
 })
 export class AppComponent implements OnInit {
 
-  inputPeso = 74;
-  inputTalla = 1.84;
-  inputSemana = 0;
-  IMC = 0;
+  pacientes: Paciente[] = [];
+  paciente = new Paciente();
 
   graphVisible = 'block';
 
   semanas: string[] = [];
-  listaIMC = [];
 
   myChart: any;
 
@@ -26,7 +25,16 @@ export class AppComponent implements OnInit {
   sobrepeso: number[] = [];
   normal: number[] = [];
 
+  constructor(private electronStoreService: ElectronStoreService) { }
+
   ngOnInit(): void {
+
+    var dropdown = document.querySelector('.dropdown');
+    dropdown!.addEventListener('click', function(event) {
+      event.stopPropagation();
+      dropdown!.classList.toggle('is-active');
+    });
+
     for (let index = 7; index <= 42; index++) {
       this.semanas.push(index.toString());
       this.sobrepeso.push(26.081 + 0.153 * index);
@@ -34,6 +42,7 @@ export class AppComponent implements OnInit {
       this.obesidad.push(35.12 + 0.105 * index);
     }
     this.crearGrafico();
+    this.cargarPacientes();
   }
 
   crearGrafico(){
@@ -42,9 +51,8 @@ export class AppComponent implements OnInit {
       data: {
           datasets: [
             {
-            //data: [45, 15],
             label: "IMC",
-            data: this.listaIMC,
+            data: this.paciente.listaIMC,
             borderColor: "#3e95cd",
             fill: true
           },
@@ -76,12 +84,43 @@ export class AppComponent implements OnInit {
   }
 
   calcularIMC(){
-    this.IMC = this.inputPeso / Math.pow(this.inputTalla,2);
+    this.paciente.IMC = this.paciente.inputPeso / Math.pow(this.paciente.inputTalla,2);
   }
 
   agregar(){
-    //if(this.inputSemana < 7) alert('El valor mínimo de semana es 7');
-    this.myChart.data.datasets[0].data.push(this.IMC.toFixed(2));
+    this.myChart.data.datasets[0].data.push(this.paciente.IMC.toFixed(2));
+    this.myChart.update();
+  }
+
+  guardar(){
+    if(this.paciente.nombre === '') {return false;}
+    this.paciente.listaIMC = this.myChart.data.datasets[0].data;
+    if(this.pacientes.find(p => p.nombre === this.paciente.nombre)){
+      const i = this.pacientes.findIndex(p => p.nombre === this.paciente.nombre);
+      this.pacientes[i] = this.paciente;
+    }else{
+      this.pacientes.push(this.paciente);
+    }
+
+    this.electronStoreService.set('pacientes', this.pacientes);
+
+  }
+
+  cargarPacientes(){
+    if(this.electronStoreService.get('pacientes')) {
+      this.pacientes = this.electronStoreService.get('pacientes');
+    };
+  }
+
+  nuevoPaciente(){
+    this.paciente = new Paciente();
+    this.myChart.data.datasets[0].data = [];
+    this.myChart.update();
+  }
+
+  cargarPaciente(paciente: Paciente){
+    this.paciente = paciente;
+    this.myChart.data.datasets[0].data = this.paciente.listaIMC;
     this.myChart.update();
   }
 
