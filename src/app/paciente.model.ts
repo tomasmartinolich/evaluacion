@@ -1,11 +1,9 @@
 export class Paciente {
-    public DNI?: number;
     public nombre: string;
     public inputPeso: number;
     public inputTalla: number;
     public IMC: number;
-    public listaIMC: number[];
-    public FUM: Date;
+    public listaIMC: [];
 
     constructor() {
         this.nombre = '',
@@ -13,6 +11,5 @@ export class Paciente {
         this.inputTalla = 0,
         this.IMC = 0,
         this.listaIMC = []
-        this.FUM = new Date();
     }
    }
