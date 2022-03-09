@@ -52,31 +52,59 @@
       <input class="input is-primary" type="string" [(ngModel)]="paciente.nombre">
     </div>
 
+    <div class="block">
+      <span>Ingresar talla (metros)</span>
+      <input class="input is-primary" type="number" [(ngModel)]="paciente.inputTalla" (change)="paciente.IMC = 0">
+    </div>
+
     <button class="button is-success" (click)="calcularIMC()" [disabled]="paciente.IMC !== 0">Calcular IMC</button>
     <br/>
+
+    <h2 class="title" *ngIf="paciente.IMC > 0">IMC = <b>{{ paciente.IMC.toFixed(2) }}</b></h2>
     
   </div>
 
   <div class="column is-one-fifth">
 
     <div class="block">
-      <span>Ingresar talla (metros)</span>
-      <input class="input is-primary" type="number" [(ngModel)]="paciente.inputTalla" (change)="paciente.IMC = 0">
+      <span>DNI</span>
+      <input class="input is-primary" type="number" [(ngModel)]="paciente.DNI">
     </div>
+
+    <div class="block">
+      <span>Ingresar peso (kilogramos)</span>
+      <input class="input is-primary" type="number" [(ngModel)]="paciente.inputPeso" (change)="paciente.IMC = 0">
+    </div>
+
+    <button class="button is-success" (click)="agregar()" [disabled]="paciente.IMC <= 0" tooltip="hola">
+      <div class="tooltip">Agregar al gráfico
+        <span class="tooltiptext" style="width: 220px;" *ngIf="paciente.IMC <=0">Es necesario calcular el IMC</span>
+      </div>
+    </button>
+
+  </div>
+
+  <div class="column is-one-fifth">
+  
+    <div class="block">
+      <span>Ingresar fecha de última menstruación</span>
+      <input class="input is-primary" type="date" [(ngModel)]="paciente.FUM" (change)="diferenciaSemanas(paciente.FUM)">
+    </div>
+
+    <h3 *ngIf="semanaEmbarazo > 0">Semana de embarazo: {{ semanaEmbarazo }}</h3>
     
-    <span>Ingresar peso (kilogramos)</span>
-    <input class="input is-primary" type="number" [(ngModel)]="paciente.inputPeso" (change)="paciente.IMC = 0">
-    <br/>
-
-    <h2 class="title">IMC = <b>{{ paciente.IMC.toFixed(2) }}</b></h2>
-
+  
   </div>
 
 </div>
 
-<div class="columns">
+<div class="columns is-gapless">
 
-  <div class="column is-12 is-offset-one-fifth">
+  <div class="column is-1">
+    <h3 class="title" style="margin-top:200px;">IMC</h3>
+  </div>
+
+  <div class="column is-10">
 
     <button class="button is-info" (click)="graphVisible = 'block'" *ngIf="graphVisible === 'none'">Ver gráfico</button>
     <button class="button is-danger" (click)="graphVisible = 'none'" *ngIf="graphVisible === 'block'">Ocultar gráfico</button>
@@ -85,11 +113,11 @@
       <canvas id="myChart"></canvas>
     </div>
 
-    <button class="button is-success" (click)="agregar()" [disabled]="paciente.IMC <= 0" tooltip="hola">
-      <div class="tooltip">Agregar IMC
-        <span class="tooltiptext" style="width: 220px;" *ngIf="paciente.IMC <=0">Es necesario calcular el IMC</span>
-      </div>
-    </button>
+    <div>
+      <h3 class="title" style="margin-left:200px;">Semana de embarazo</h3>
+    </div>
+
+    
 
   </div>
 
